@@ -1,0 +1,2 @@
+2. hét:
+A megbeszéltek alapján létrehoztam a gites repomat, amiben egyelőre a readme.md nagyjából üres, a dokumentációknak szánt mappába pedig elhelyeztem a haladási naplót, amit jelenleg írok. A héten megnéztem a csatolt videót és a mellékelt leírást is a CameraX APIról, illetve az MLKitről. 
