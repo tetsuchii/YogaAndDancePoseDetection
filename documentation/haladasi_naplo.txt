@@ -1,2 +1,6 @@
 2. hét:
 A megbeszéltek alapján létrehoztam a gites repomat, amiben egyelőre a readme.md nagyjából üres, a dokumentációknak szánt mappába pedig elhelyeztem a haladási naplót, amit jelenleg írok. A héten megnéztem a csatolt videót és a mellékelt leírást is a CameraX APIról, illetve az MLKitről. 
+3. hét:
+Elkezdtem egy próba projektet, amiben először is kipróbálom a CameraX-et, ezen leírás alapján: https://developer.android.com/codelabs/camerax-getting-started#0
+Még nem tudtam végigcsinálni, mert a gépem nem bírja el az emulátort, és csak vasárnap tudok szerezni egy régebbi androidos telefont a teszteléshez. 
+A madár felismerésről találtam egy konkrét videót az Android Developers csatornáján, illetve több nem ennyire specifikus ML kit és TensorFlow témájút, amik sokat segítettek a megértésben, illetve valószínüleg akkor fognak többet, amikor már ténylegesen tudok foglalkozni az app megvalósításával.
