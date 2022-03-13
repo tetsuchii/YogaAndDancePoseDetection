@@ -4,3 +4,5 @@ A megbeszéltek alapján létrehoztam a gites repomat, amiben egyelőre a readme
 Elkezdtem egy próba projektet, amiben először is kipróbálom a CameraX-et, ezen leírás alapján: https://developer.android.com/codelabs/camerax-getting-started#0
 Még nem tudtam végigcsinálni, mert a gépem nem bírja el az emulátort, és csak vasárnap tudok szerezni egy régebbi androidos telefont a teszteléshez. 
 A madár felismerésről találtam egy konkrét videót az Android Developers csatornáján, illetve több nem ennyire specifikus ML kit és TensorFlow témájút, amik sokat segítettek a megértésben, illetve valószínüleg akkor fognak többet, amikor már ténylegesen tudok foglalkozni az app megvalósításával.
+4. hét: 
+Elkészültem a madár felismerős és fotózós projekttel. Az app felismeri a madarakat, és le is fotózza őket, CameraX, illetve ML Kit Object detection segítségével. 
