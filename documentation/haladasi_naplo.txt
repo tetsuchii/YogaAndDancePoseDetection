@@ -6,3 +6,5 @@ Még nem tudtam végigcsinálni, mert a gépem nem bírja el az emulátort, és 
 A madár felismerésről találtam egy konkrét videót az Android Developers csatornáján, illetve több nem ennyire specifikus ML kit és TensorFlow témájút, amik sokat segítettek a megértésben, illetve valószínüleg akkor fognak többet, amikor már ténylegesen tudok foglalkozni az app megvalósításával.
 4. hét: 
 Elkészültem a madár felismerős és fotózós projekttel. Az app felismeri a madarakat, és le is fotózza őket, CameraX, illetve ML Kit Object detection segítségével. 
+5. hét: 
+A Google által létrehozott MLKIt mintaprojekteket néztem át. Ezek nem szerepelnek a gites repoban.
