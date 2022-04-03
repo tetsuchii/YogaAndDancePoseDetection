@@ -5,22 +5,31 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import onlab.mlkit.tiktok.databinding.ActivityMainBinding
+import onlab.mlkit.tiktok.logic.PoseImageAnalyzer
+import onlab.mlkit.tiktok.logic.PoseLogic
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
 
     private lateinit var cameraExecutor: ExecutorService
+
+    val poseLogic = PoseLogic()
+    val analiser = PoseImageAnalyzer(poseLogic)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +55,13 @@ class MainActivity : AppCompatActivity() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(480, 360))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+
+            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), analiser)
+            
             // Preview
             val preview = Preview.Builder()
                 .build()
@@ -54,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
             // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
                 // Unbind use cases before rebinding
@@ -62,7 +78,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, imageAnalysis, preview)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
