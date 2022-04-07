@@ -1,11 +1,15 @@
 package onlab.mlkit.tiktok
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.Size
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -27,8 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
-    val poseLogic = PoseLogic()
-    val analiser = PoseImageAnalyzer(poseLogic)
+    private val poseLogic = PoseLogic(this)
+    private val analyser = PoseImageAnalyzer(poseLogic)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
-            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), analiser)
+            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), analyser)
             
             // Preview
             val preview = Preview.Builder()
@@ -109,6 +113,8 @@ class MainActivity : AppCompatActivity() {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
+
+
     }
 
     override fun onRequestPermissionsResult(
@@ -125,6 +131,28 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun changeStepImage(number : Int){
+
+        when(number) {
+            1 -> viewBinding.stepPhoto.setImageResource(R.drawable.first)
+            2 -> viewBinding.stepPhoto.setImageResource(R.drawable.second)
+            3 -> viewBinding.stepPhoto.setImageResource(R.drawable.third)
+            4 -> viewBinding.stepPhoto.setImageResource(R.drawable.fourth)
+            5 -> viewBinding.stepPhoto.setImageResource(R.drawable.fifth)
+            6 -> viewBinding.stepPhoto.setImageResource(R.drawable.sixth)
+        }
+    }
+    fun showOk (){
+        viewBinding.like.visibility = View.VISIBLE
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                viewBinding.like.visibility = View.INVISIBLE
+            },
+            3000 // value in milliseconds
+        )
     }
 
 }
