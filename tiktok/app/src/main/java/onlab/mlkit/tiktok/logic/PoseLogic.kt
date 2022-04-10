@@ -5,6 +5,7 @@ import android.os.Looper
 import android.util.Log
 import com.google.mlkit.vision.pose.PoseLandmark
 import onlab.mlkit.tiktok.MainActivity
+import ru.nsk.kstatemachine.*
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -15,6 +16,77 @@ class PoseLogic(private val activity: MainActivity) {
     private var firstInit = true
     private var kneeToKnee = 0.0f
     private var ankleToAnkle = 0.0f
+    private var notFinal = true
+    private val machine : StateMachine = createStateMachine {
+        addInitialState(States.InitStep) {
+            // Add state listeners
+            onEntry { println("Enter INIT") }
+            onExit { println("Exit INIT") }
+
+            // Setup transition
+            transition<Events.SwitchState> {
+                targetState = States.FirstStep
+                // Add transition listener
+                onTriggered { println("Transition triggered")
+                    activity.changeStepImage(1)
+                }
+            }
+        }
+        addState(States.FirstStep) {
+            transition<Events.FirstToSecond> {
+                guard = {checkFirstStep()}
+                targetState = States.SecondStep
+                onTriggered { activity.showOk()
+                    activity.changeStepImage(2) }
+
+            }
+            onEntry { println("Enter FirstStep") }
+            onExit { println("Exit FirstStep") }
+        }
+        addState(States.SecondStep) {
+            transition<Events.SecondToThird> {
+                guard = {checkSecondStep()}
+                targetState = States.SecondStep
+                onTriggered { activity.showOk()
+                    activity.changeStepImage(3) }
+            }
+        }
+        addState(States.ThirdStep) {
+            transition<Events.ThirdToFourth> {
+                guard = {checkThirdStep()}
+                targetState = States.FourthStep
+                onTriggered { activity.showOk()
+                    activity.changeStepImage(4) }
+            }
+        }
+        addState(States.FourthStep) {
+            transition<Events.FourthToFifth> {
+                guard = {checkFourthStep()}
+                targetState = States.FifthStep
+                onTriggered { activity.showOk()
+                    activity.changeStepImage(5) }
+            }
+        }
+        addState(States.FifthStep) {
+            transition<Events.FifthToSixth> {
+                guard = {checkSecondStep()}
+                targetState = States.SixthStep
+                onTriggered { activity.showOk()
+                    activity.changeStepImage(6) }
+            }
+        }
+        addState(States.SixthStep) {
+            transition<Events.SixthToFinal> {
+                guard = {checkThirdStep()}
+                targetState = States.FinalStep
+                onTriggered { notFinal=false }
+            }
+        }
+
+        addFinalState(States.FinalStep)
+
+        onFinished { println("Finished") }
+    }
 
     fun updatePoseLandmarks(newList : List<PoseLandmark>){
         poseLandmarks=newList
@@ -24,14 +96,18 @@ class PoseLogic(private val activity: MainActivity) {
         val rightKnee = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_KNEE }
         val leftKnee = poseLandmarks.find { it.landmarkType==PoseLandmark.LEFT_KNEE }
 
+
         if(firstInit &&  rightKnee != null && rightAnkle != null && leftAnkle != null && leftKnee != null){
             firstInit=false
             kneeToKnee= abs(rightKnee.position.x - leftKnee.position.x)
             ankleToAnkle=abs(rightAnkle.position.x - leftAnkle.position.x)
             Log.i("PoseLogic", "INIT OK")
-            activity.changeStepImage(1)
+            machine.processEvent(Events.SwitchState)
+            //machine.processEvent(Events.FirstToSecond)
+
         }
-        else {
+
+        /*else {
             //Step by step
             if(checkFirstStep()){
                 Log.i("PoseLogic", "firstStep ok")
@@ -87,10 +163,11 @@ class PoseLogic(private val activity: MainActivity) {
                     5000 // value in milliseconds
                 )
             }
-        }
+        }*/
     }
 
     private fun checkFirstStep(): Boolean {
+        Log.i("PoseLogic","FirstStep CHECK")
         val rightAnkle = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_ANKLE }
         val leftAnkle = poseLandmarks.find {it.landmarkType==PoseLandmark.LEFT_ANKLE}
         val rightKnee = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_KNEE }
@@ -162,6 +239,7 @@ class PoseLogic(private val activity: MainActivity) {
         }
         return false
     }
+
 
     data class Vec2(
         val x: Float,

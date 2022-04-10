@@ -13,3 +13,5 @@ A konzultáción megbeszélt "tánc tanuló" apphoz kerestem megfelelő tánclé
 7. hét:
 Elkezdtem felépíteni az app szerkezetét, és logikáját, elméletben már a posedetection init része működik, illetve az első lépést is felismeri. Ezt tesztelni még nem sikerült. 
 A kamera fölött megjelenő képek változtatásával kissé elakadtam. Még nem találtam meg a megfelelő megoldást, hogy dinamikusan tudjam frissíteni minden lépés után a megjelenő képet, illetve, hogy valamilyen feedback képet is megjelenítsek a felhasználó számára a sikeres művelet után. (Tehát, ha egy lépés sikeres volt, megjelenjen a képernyőn egy pipa vagy like jel.) 
+8. hét:
+A lépéseket ellenőrző függvények elkészültek, helyesen működnek, a képek is változnak lépésenként, bár az állapotgép nem működik tökéletesen. A jővőhéten egy újabb megközelítésben fogok nekifutni. 
