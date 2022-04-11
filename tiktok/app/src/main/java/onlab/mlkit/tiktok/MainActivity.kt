@@ -1,26 +1,39 @@
 package onlab.mlkit.tiktok
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.util.Size
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import onlab.mlkit.tiktok.databinding.ActivityMainBinding
+import onlab.mlkit.tiktok.logic.PoseImageAnalyzer
+import onlab.mlkit.tiktok.logic.PoseLogic
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
 
     private lateinit var cameraExecutor: ExecutorService
+
+    private val poseLogic = PoseLogic(this)
+    private val analyser = PoseImageAnalyzer(poseLogic)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +59,13 @@ class MainActivity : AppCompatActivity() {
             // Used to bind the lifecycle of cameras to the lifecycle owner
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(480, 360))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+
+            imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), analyser)
+            
             // Preview
             val preview = Preview.Builder()
                 .build()
@@ -54,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
             // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             try {
                 // Unbind use cases before rebinding
@@ -62,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, imageAnalysis, preview)
 
             } catch(exc: Exception) {
                 Log.e(TAG, "Use case binding failed", exc)
@@ -93,6 +113,8 @@ class MainActivity : AppCompatActivity() {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
+
+
     }
 
     override fun onRequestPermissionsResult(
@@ -109,6 +131,28 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun changeStepImage(number : Int){
+
+        when(number) {
+            1 -> viewBinding.stepPhoto.setImageResource(R.drawable.first)
+            2 -> viewBinding.stepPhoto.setImageResource(R.drawable.second)
+            3 -> viewBinding.stepPhoto.setImageResource(R.drawable.third)
+            4 -> viewBinding.stepPhoto.setImageResource(R.drawable.fourth)
+            5 -> viewBinding.stepPhoto.setImageResource(R.drawable.fifth)
+            6 -> viewBinding.stepPhoto.setImageResource(R.drawable.sixth)
+        }
+    }
+    fun showOk (){
+        viewBinding.like.visibility = View.VISIBLE
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                viewBinding.like.visibility = View.INVISIBLE
+            },
+            3000 // value in milliseconds
+        )
     }
 
 }
