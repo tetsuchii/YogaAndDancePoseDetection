@@ -8,7 +8,7 @@ import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions
 
-class PoseImageAnalyzer(val poseLogic: PoseLogic) : ImageAnalysis.Analyzer{
+class PoseImageAnalyzer(val poseLogic: PoseLogic,val mode : Int) : ImageAnalysis.Analyzer{
 
     private lateinit var poseDetector : PoseDetector
 
@@ -25,7 +25,7 @@ class PoseImageAnalyzer(val poseLogic: PoseLogic) : ImageAnalysis.Analyzer{
         if(mediaImage != null){
             val image = InputImage.fromMediaImage(mediaImage,imageP.imageInfo.rotationDegrees)
             poseDetector.process(image)
-                .addOnSuccessListener { results -> poseLogic.updatePoseLandmarks(results.allPoseLandmarks) }
+                .addOnSuccessListener { results -> poseLogic.updatePoseLandmarks(results.allPoseLandmarks,mode) }
                 .addOnFailureListener { e -> println(e) }
                 .addOnCompleteListener{
                     mediaImage.close()

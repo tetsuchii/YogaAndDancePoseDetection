@@ -4,170 +4,129 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.google.mlkit.vision.pose.PoseLandmark
+import onlab.mlkit.tiktok.CameraActivity
 import onlab.mlkit.tiktok.MainActivity
-import ru.nsk.kstatemachine.*
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.math.tan
 
-class PoseLogic(private val activity: MainActivity) {
+class PoseLogic(private val activity: CameraActivity) {
     private var poseLandmarks : List<PoseLandmark> = listOf()
     private var firstInit = true
     private var kneeToKnee = 0.0f
     private var ankleToAnkle = 0.0f
-    private var notFinal = true
-    private val machine : StateMachine = createStateMachine {
-        addInitialState(States.InitStep) {
-            // Add state listeners
-            onEntry { println("Enter INIT") }
-            onExit { println("Exit INIT") }
+    private var stepCounter = 0
 
-            // Setup transition
-            transition<Events.SwitchState> {
-                targetState = States.FirstStep
-                // Add transition listener
-                onTriggered { println("Transition triggered")
-                    activity.changeStepImage(1)
+
+    fun updatePoseLandmarks(newList : List<PoseLandmark>,mode : Int) {
+        poseLandmarks = newList
+
+        val rightAnkle = poseLandmarks.find { it.landmarkType == PoseLandmark.RIGHT_ANKLE }
+        val leftAnkle = poseLandmarks.find { it.landmarkType == PoseLandmark.LEFT_ANKLE }
+        val rightKnee = poseLandmarks.find { it.landmarkType == PoseLandmark.RIGHT_KNEE }
+        val leftKnee = poseLandmarks.find { it.landmarkType == PoseLandmark.LEFT_KNEE }
+
+        if (mode == 0) {
+
+            if (firstInit && rightKnee != null && rightAnkle != null && leftAnkle != null && leftKnee != null) {
+                firstInit = false
+                kneeToKnee = abs(rightKnee.position.x - leftKnee.position.x)
+                ankleToAnkle = abs(rightAnkle.position.x - leftAnkle.position.x)
+                Log.i("PoseLogic", "INIT OK")
+            } else {
+                if (stepCounter == 0 && checkFirstStep()) {
+                    stepCounter++
+                    Log.i("PoseLogic", "firstStep ok")
+                    activity.showOk()
+                    activity.changeStepImage(2)
+                }
+                if (stepCounter == 1 && checkSecondStep()) {
+                    stepCounter++
+                    Log.i("PoseLogic", "secondStep ok")
+                    activity.showOk()
+                    activity.changeStepImage(3)
+                }
+                if (stepCounter == 2 && checkThirdStep()) {
+                    stepCounter++
+                    Log.i("PoseLogic", "thirdStep ok")
+                    activity.showOk()
+                    activity.changeStepImage(4)
+                }
+                if (stepCounter == 3 && checkFourthStep()) {
+                    stepCounter++
+                    Log.i("PoseLogic", "fourthStep ok")
+                    activity.showOk()
+                    activity.changeStepImage(5)
+                }
+                if (stepCounter == 4 && checkSecondStep()) {
+                    stepCounter++
+                    Log.i("PoseLogic", "fifthStep ok")
+                    activity.showOk()
+                    activity.changeStepImage(6)
+                }
+                if (stepCounter == 5 && checkThirdStep()) {
+                    stepCounter++
+                    Log.i("PoseLogic", "sixthStep ok")
+                    activity.showOk()
                 }
             }
-        }
-        addState(States.FirstStep) {
-            transition<Events.FirstToSecond> {
-                guard = {checkFirstStep()}
-                targetState = States.SecondStep
-                onTriggered { activity.showOk()
-                    activity.changeStepImage(2) }
-
-            }
-            onEntry { println("Enter FirstStep") }
-            onExit { println("Exit FirstStep") }
-        }
-        addState(States.SecondStep) {
-            transition<Events.SecondToThird> {
-                guard = {checkSecondStep()}
-                targetState = States.SecondStep
-                onTriggered { activity.showOk()
-                    activity.changeStepImage(3) }
-            }
-        }
-        addState(States.ThirdStep) {
-            transition<Events.ThirdToFourth> {
-                guard = {checkThirdStep()}
-                targetState = States.FourthStep
-                onTriggered { activity.showOk()
-                    activity.changeStepImage(4) }
-            }
-        }
-        addState(States.FourthStep) {
-            transition<Events.FourthToFifth> {
-                guard = {checkFourthStep()}
-                targetState = States.FifthStep
-                onTriggered { activity.showOk()
-                    activity.changeStepImage(5) }
-            }
-        }
-        addState(States.FifthStep) {
-            transition<Events.FifthToSixth> {
-                guard = {checkSecondStep()}
-                targetState = States.SixthStep
-                onTriggered { activity.showOk()
-                    activity.changeStepImage(6) }
-            }
-        }
-        addState(States.SixthStep) {
-            transition<Events.SixthToFinal> {
-                guard = {checkThirdStep()}
-                targetState = States.FinalStep
-                onTriggered { notFinal=false }
-            }
-        }
-
-        addFinalState(States.FinalStep)
-
-        onFinished { println("Finished") }
-    }
-
-    fun updatePoseLandmarks(newList : List<PoseLandmark>){
-        poseLandmarks=newList
-
-        val rightAnkle = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_ANKLE }
-        val leftAnkle = poseLandmarks.find {it.landmarkType==PoseLandmark.LEFT_ANKLE}
-        val rightKnee = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_KNEE }
-        val leftKnee = poseLandmarks.find { it.landmarkType==PoseLandmark.LEFT_KNEE }
-
-
-        if(firstInit &&  rightKnee != null && rightAnkle != null && leftAnkle != null && leftKnee != null){
-            firstInit=false
-            kneeToKnee= abs(rightKnee.position.x - leftKnee.position.x)
-            ankleToAnkle=abs(rightAnkle.position.x - leftAnkle.position.x)
-            Log.i("PoseLogic", "INIT OK")
-            machine.processEvent(Events.SwitchState)
-            //machine.processEvent(Events.FirstToSecond)
-
-        }
-
-        /*else {
-            //Step by step
-            if(checkFirstStep()){
-                Log.i("PoseLogic", "firstStep ok")
-                activity.showOk()
-                activity.changeStepImage(2)
+        } else {
+            var score=0
+            if (firstInit && rightKnee != null && rightAnkle != null && leftAnkle != null && leftKnee != null) {
+                firstInit = false
+                kneeToKnee = abs(rightKnee.position.x - leftKnee.position.x)
+                ankleToAnkle = abs(rightAnkle.position.x - leftAnkle.position.x)
+                Log.i("PoseLogic Practice", "INIT OK")
                 Handler(Looper.getMainLooper()).postDelayed(
                     {
-                        if(checkSecondStep()){
-                            Log.i("PoseLogic", "secondStep ok")
-                            activity.showOk()
-                            activity.changeStepImage(3)
-                            Handler(Looper.getMainLooper()).postDelayed(
-                                {
-                                    if(checkThirdStep()){
-                                        Log.i("PoseLogic","thirdStep ok")
-                                        activity.showOk()
+                        if (checkFirstStep())
+                        score++
+                        activity.changeStepImage(2)
+                        Handler(Looper.getMainLooper()).postDelayed(
+                            {
+                                if (checkSecondStep())
+                                    score++
+                                activity.changeStepImage(3)
+                                Handler(Looper.getMainLooper()).postDelayed(
+                                    {
+                                        if (checkThirdStep())
+                                            score++
                                         activity.changeStepImage(4)
                                         Handler(Looper.getMainLooper()).postDelayed(
                                             {
-                                                if(checkFourthStep()){
-                                                    Log.i("PoseLogic","fourthStep ok")
-                                                    activity.showOk()
-                                                    activity.changeStepImage(5)
-                                                    Handler(Looper.getMainLooper()).postDelayed(
-                                                        {
-                                                            if(checkSecondStep()){
-                                                                Log.i("PoseLogic","fifthStep ok")
-                                                                activity.showOk()
-                                                                activity.changeStepImage(6 )
-                                                                Handler(Looper.getMainLooper()).postDelayed(
-                                                                    {
-                                                                        if(checkThirdStep()){
-                                                                            Log.i("PoseLogic","sixthStep ok")
-                                                                            activity.showOk()
-                                                                        }
-                                                                    },
-                                                                    5000 // value in milliseconds
-                                                                )
-                                                            }
-                                                        },
-                                                        5000 // value in milliseconds
-                                                    )
-                                                }
+                                                if (checkFourthStep())
+                                                    score++
+                                                activity.changeStepImage(5)
+                                                Handler(Looper.getMainLooper()).postDelayed(
+                                                    {
+                                                        if (checkSecondStep())
+                                                            score++
+                                                        activity.changeStepImage(6)
+                                                        Handler(Looper.getMainLooper()).postDelayed(
+                                                            {
+                                                                if (checkThirdStep())
+                                                                    score++
+                                                                if(score > 3)
+                                                                    activity.showBigLike()
+                                                            },
+                                                            2000)
+                                                    },
+                                                    2000)
                                             },
-                                            5000 // value in milliseconds
-                                        )
-                                    }
-                                },
-                                5000 // value in milliseconds
-                            )
-                        }
+                                            2000)
+                                    },
+                                    2000) // value in milliseconds
+                            },
+                            2000) // value in milliseconds
                     },
-                    5000 // value in milliseconds
+                    2000 // value in milliseconds
                 )
             }
-        }*/
+        }
     }
 
     private fun checkFirstStep(): Boolean {
-        Log.i("PoseLogic","FirstStep CHECK")
         val rightAnkle = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_ANKLE }
         val leftAnkle = poseLandmarks.find {it.landmarkType==PoseLandmark.LEFT_ANKLE}
         val rightKnee = poseLandmarks.find { it.landmarkType==PoseLandmark.RIGHT_KNEE }
@@ -250,3 +209,4 @@ class PoseLogic(private val activity: MainActivity) {
     }
 
 }
+

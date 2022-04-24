@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="0dp" >
+    </androidx.camera.view.PreviewView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_centerline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".50" />
+
+    <ImageView
+        android:id="@+id/stepPhoto"
+        android:layout_width="200dp"
+        android:layout_height="155dp"
+        android:layout_marginStart="200dp"
+        android:layout_marginBottom="50dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/zero"
+        android:scaleType="fitXY"
+        android:src="@drawable/zero"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBaseline_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/like"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:layout_constraintBaseline_toBottomOf="@drawable/like"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:visibility="invisible"
+        android:background="@drawable/like"/>
+
+    <ImageView
+        android:id="@+id/bigLike"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintBaseline_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/stepPhoto"
+        android:visibility="invisible"
+        android:background="@drawable/like"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
