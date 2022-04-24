@@ -37,9 +37,10 @@ android {
 
 dependencies {
 
-    implementation 'io.github.nsk90:kstatemachine:0.9.4'
-
+    implementation "androidx.cardview:cardview:1.0.0"
     implementation 'com.google.mlkit:pose-detection:17.0.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     def camerax_version = "1.1.0-beta01"
     //noinspection GradleDependency
     implementation "androidx.camera:camera-core:${camerax_version}"

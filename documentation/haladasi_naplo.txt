@@ -15,3 +15,5 @@ Elkezdtem felépíteni az app szerkezetét, és logikáját, elméletben már a 
 A kamera fölött megjelenő képek változtatásával kissé elakadtam. Még nem találtam meg a megfelelő megoldást, hogy dinamikusan tudjam frissíteni minden lépés után a megjelenő képet, illetve, hogy valamilyen feedback képet is megjelenítsek a felhasználó számára a sikeres művelet után. (Tehát, ha egy lépés sikeres volt, megjelenjen a képernyőn egy pipa vagy like jel.) 
 8. hét:
 A lépéseket ellenőrző függvények elkészültek, helyesen működnek, a képek is változnak lépésenként, bár az állapotgép nem működik tökéletesen. A jővőhéten egy újabb megközelítésben fogok nekifutni. 
+9-10.hét: 
+A lépések ellenőrzése megtörténik, használható a learn funkció. A felhasználó már tud választani az opciók között, a háttér animált és megjelenik egy menüsor, ahonnan táncokat lehet a későbbiekben választani.
