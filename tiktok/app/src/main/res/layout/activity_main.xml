@@ -9,83 +9,12 @@
     tools:context=".MainActivity"
     android:orientation="horizontal">
 
-    <androidx.cardview.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
-        android:layout_gravity="center"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDances"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        card_view:cardCornerRadius="20dp">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="5dp">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/rounded_corners"
-                android:layout_margin="5dp"
-                android:elevation="10dp"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:id="@+id/dance1_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:src="@drawable/second"
-                    android:background="@color/white"
-                    android:scaleType="centerCrop"
-                    />
-            </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/dance1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="@string/dance1"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-            <TextView
-                android:id="@+id/dance1_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-
-                android:text="@string/dance1_detail"
-                android:textAppearance="?android:attr/textAppearanceMedium"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/learnSteps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Learn"
-                    android:background="@color/colorGradientEnd"
-                    android:layout_margin="10dp"/>
-                <Button
-                    android:id="@+id/practiceSteps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@color/colorGradientEnd"
-                    android:text="Practice"/>
-        </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:menu="@menu/bottom_navigation_menu" />
+    </androidx.recyclerview.widget.RecyclerView>
 
 
 </LinearLayout>

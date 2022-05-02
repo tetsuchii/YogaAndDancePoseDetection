@@ -11,4 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="dance1">Running man</string>
     <string name="dance1_detail">The famous shuffle move. Dance like Redfoo in Party Rock Anthem!</string>
+    <string name="dance_image">dance image</string>
+    <string name="learn">Learn</string>
+    <string name="Practice">Practice</string>
 </resources>

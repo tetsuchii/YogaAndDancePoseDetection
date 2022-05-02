@@ -17,3 +17,5 @@ A kamera fölött megjelenő képek változtatásával kissé elakadtam. Még ne
 A lépéseket ellenőrző függvények elkészültek, helyesen működnek, a képek is változnak lépésenként, bár az állapotgép nem működik tökéletesen. A jővőhéten egy újabb megközelítésben fogok nekifutni. 
 9-10.hét: 
 A lépések ellenőrzése megtörténik, használható a learn funkció. A felhasználó már tud választani az opciók között, a háttér animált és megjelenik egy menüsor, ahonnan táncokat lehet a későbbiekben választani.
+11.hét:
+A menüt esztétikailag javítottam, illetve a menü elemek, azaz a választható táncok görgethető listában jelennek meg mostmár. A táncok tárolásával elakadtam.
