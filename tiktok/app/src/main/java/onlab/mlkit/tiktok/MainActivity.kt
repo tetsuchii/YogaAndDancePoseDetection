@@ -5,14 +5,21 @@ import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
 import android.os.*
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import onlab.mlkit.tiktok.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ListAdapter.OnItemClickListener {
 
     private lateinit var viewBinding: ActivityMainBinding
+    var dancesList = mutableListOf(
+        Dance("Running man","The famous shuffle move. Dance like Redfoo in Party Rock Anthem!"),
+        Dance("Happy dance","This dance makes everyone happy around you!")
+    )
+    val adapter = ListAdapter(dancesList,this,this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,43 +33,14 @@ class MainActivity : AppCompatActivity() {
         animDrawable.setEnterFadeDuration(10)
         animDrawable.setExitFadeDuration(5000)
         animDrawable.start()
+        viewBinding.rvDances.adapter = adapter
+        viewBinding.rvDances.layoutManager = LinearLayoutManager(this)
 
-        BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            when(item.itemId) {
-                R.id.page_1 -> {
-                    // Respond to navigation item 1 click
-                    true
-                }
-                R.id.page_2 -> {
-                    // Respond to navigation item 2 click
-                    true
-                }
-                else -> false
-            }
-        }
-        viewBinding.bottomNavigation.setOnNavigationItemReselectedListener { item ->
-            when(item.itemId) {
-                R.id.page_1 -> {
-                    // Respond to navigation item 1 reselection
-                }
-                R.id.page_2 -> {
-                    // Respond to navigation item 2 reselection
-                }
-            }
-        }
 
-        viewBinding.learnSteps.setOnClickListener{
-            intent = Intent(applicationContext, CameraActivity::class.java)
-            intent.type="learn"
-            startActivity(intent)
-        }
+    }
 
-        viewBinding.practiceSteps.setOnClickListener{
-            intent = Intent(applicationContext, CameraActivity::class.java)
-            intent.type="practice"
-            startActivity(intent)
-        }
-
+    override fun OnItemCLick() {
+        adapter.notifyDataSetChanged()
     }
 
 
