@@ -19,3 +19,8 @@ A lépéseket ellenőrző függvények elkészültek, helyesen működnek, a ké
 A lépések ellenőrzése megtörténik, használható a learn funkció. A felhasználó már tud választani az opciók között, a háttér animált és megjelenik egy menüsor, ahonnan táncokat lehet a későbbiekben választani.
 11.hét:
 A menüt esztétikailag javítottam, illetve a menü elemek, azaz a választható táncok görgethető listában jelennek meg mostmár. A táncok tárolásával elakadtam.
+12.hét: 
+A konzultáción megbeszéltek szerint, a táncok bővíthetőségén és tárolásán gondolkodtam a héten. Eleinte SQLite-bna terveztem megvalósítani, amiről igyekeztem minél több leírást és videót keresni, hiszen egy pre populated adatbázist kellene létrehoznom, amiben még nem volt gyakorlatom. Ahogy az adatmodellen gondolkoztam, több nehézségbe is ütköztem. Egyrészt, minden egyes koreográfiának változó a lépésszáma, így egy nem meghatározott tömbben kéne a képeket tárolni. A tömb, mint olyan már nehézségként hatott, amit csak tetőzött a képek tárolása. Miután sikeresen utánanéztem mindennek, arra jutottam, hogy nem ez lesz a helyes út, így újabb lehetőséget kerestem. 
+Jelenleg a Firebase Cloud Firestore tűnik a legjobb megoldásnak, mivel nosql, lehetőség van benne tömbök összeállítására és képek tárolására is. A későbbiekben pedig könnyen lehetne bővíteni autentikációval, és a custom tánclépések hozzáadásának lehetőségével is. 
+Jelenleg a Firebase rendszerét igyekszem megismerni és összeállítani az adatbázist. 
+Abban még mindig el vagyok akadva, hogy pontosan hogyan is tudnám a PoseLogic osztályt átalakítani úgy, hogy az eltárolt képeket hasonlítsa össze a camera által kapott képpel.
