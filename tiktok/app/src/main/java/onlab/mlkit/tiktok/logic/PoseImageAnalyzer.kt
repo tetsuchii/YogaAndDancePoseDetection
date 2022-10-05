@@ -25,7 +25,9 @@ class PoseImageAnalyzer(val poseLogic: PoseLogic,val mode : Int) : ImageAnalysis
         if(mediaImage != null){
             val image = InputImage.fromMediaImage(mediaImage,imageP.imageInfo.rotationDegrees)
             poseDetector.process(image)
-                .addOnSuccessListener { results -> poseLogic.updatePoseLandmarks(results.allPoseLandmarks,mode) }
+                .addOnSuccessListener {
+                    /*results -> poseLogic.updatePoseLandmarks(results.allPoseLandmarks,mode)*/
+                }
                 .addOnFailureListener { e -> println(e) }
                 .addOnCompleteListener{
                     mediaImage.close()

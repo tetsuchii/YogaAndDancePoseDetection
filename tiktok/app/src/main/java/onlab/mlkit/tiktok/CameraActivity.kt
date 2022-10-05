@@ -14,11 +14,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.PoseDetector
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
+import com.onelinegaming.posedetectiondemo.PoseGraphic
 import onlab.mlkit.tiktok.databinding.ActivityCameraBinding
+import onlab.mlkit.tiktok.drawing.GraphicOverlay
 import onlab.mlkit.tiktok.logic.PoseImageAnalyzer
 import onlab.mlkit.tiktok.logic.PoseLogic
 import java.util.concurrent.ExecutorService
@@ -70,6 +77,9 @@ class CameraActivity : AppCompatActivity() {
                 .setTargetResolution(Size(480, 360))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
+                .also {
+                    it.setAnalyzer(cameraExecutor, ImageAnalyzer(viewBinding.graphicOverlay, CameraSelector.DEFAULT_FRONT_CAMERA))
+                }
 
             imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(this), analyser)
 
@@ -171,4 +181,64 @@ class CameraActivity : AppCompatActivity() {
             8000 // value in milliseconds
         )    }
 
+
+    private inner class ImageAnalyzer(
+        val graphicOverlay: GraphicOverlay,
+        val cameraSelector: CameraSelector
+    ) : ImageAnalysis.Analyzer {
+
+        private val poseDetector: PoseDetector
+
+        init {
+            poseDetector = initPoseRecognition()
+        }
+
+        private fun initPoseRecognition(): PoseDetector {
+            val options = PoseDetectorOptions.Builder()
+                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+                .build()
+
+            return PoseDetection.getClient(options)
+        }
+
+        @SuppressLint("UnsafeOptInUsageError")
+        override fun analyze(imageProxy: ImageProxy) {
+            val isImageFlipped = cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA
+            val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+            if (rotationDegrees == 0 || rotationDegrees == 180) {
+                graphicOverlay.setImageSourceInfo(
+                    imageProxy.width, imageProxy.height, isImageFlipped
+                )
+            } else {
+                graphicOverlay.setImageSourceInfo(
+                    imageProxy.height, imageProxy.width, isImageFlipped
+                )
+            }
+
+            val mediaImage = imageProxy.image
+            if (mediaImage != null) {
+                val image =
+                    InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+                // Pass image to an ML Kit Vision API
+
+                poseDetector.process(image)
+                    .addOnSuccessListener { results ->
+                        graphicOverlay.clear()
+                        //check(results)
+                        graphicOverlay.add(
+                            PoseGraphic(
+                                graphicOverlay,
+                                results,  this@CameraActivity
+                            )
+                        )
+                    }
+                    .addOnFailureListener { e ->
+                    }
+                    .addOnCompleteListener {
+                        imageProxy.close()
+                    }
+
+            }
+        }
+    }
 }
