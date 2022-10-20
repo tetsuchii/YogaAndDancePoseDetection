@@ -24,6 +24,22 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".50" />
 
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/twenty_percent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2"/>
+
+    <onlab.mlkit.tiktok.drawing.RectOverlay
+        android:id="@+id/rectOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        android:layout_weight="2"/>
+
     <ImageView
         android:id="@+id/stepPhoto"
         android:layout_width="200dp"

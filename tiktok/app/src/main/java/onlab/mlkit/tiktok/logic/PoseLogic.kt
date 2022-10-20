@@ -201,8 +201,8 @@ class PoseLogic(private val activity: CameraActivity) {
 
 
     data class Vec2(
-        val x: Float,
-        val y: Float
+        var x: Float,
+        var y: Float
     ) {
         private infix fun dst2To(to: Vec2) = (x - to.x).pow(2) + (y - to.y).pow(2)
         infix fun dstTo(to: Vec2) = sqrt(this dst2To to)

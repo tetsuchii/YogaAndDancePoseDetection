@@ -1,4 +1,4 @@
-package onlab.mlkit.tiktok
+package onlab.mlkit.tiktok.data
 
 import android.graphics.Bitmap
 
