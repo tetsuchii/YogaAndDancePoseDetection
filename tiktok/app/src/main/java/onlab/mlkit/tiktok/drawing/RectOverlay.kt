@@ -1,20 +1,35 @@
-package com.example.posedetection_game
+package onlab.mlkit.tiktok.drawing
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.google.mlkit.vision.pose.PoseLandmark
+import kotlin.math.absoluteValue
+import kotlin.math.max
 
 class RectOverlay constructor(context: Context?, attributeSet: AttributeSet?) :
     View(context, attributeSet) {
+    private val transformationMatrix = Matrix()
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
     private val STROKE_WIDTH = 3f // has to be float
     private val drawColor = Color.RED
+
     // Set up the paint with which to draw.
     private val paint = Paint().apply {
         color = drawColor
+        // Smooths out edges of what is drawn without affecting shape.
+        isAntiAlias = true
+        // Dithering affects how colors with higher-precision than the device are down-sampled.
+        isDither = true
+        style = Paint.Style.STROKE // default: FILL
+        strokeJoin = Paint.Join.ROUND // default: MITER
+        strokeCap = Paint.Cap.ROUND // default: BUTT
+        strokeWidth = STROKE_WIDTH // default: Hairline-width (really thin)
+    }
+    private val paintGreen = Paint().apply {
+        color = Color.GREEN
         // Smooths out edges of what is drawn without affecting shape.
         isAntiAlias = true
         // Dithering affects how colors with higher-precision than the device are down-sampled.
@@ -31,6 +46,7 @@ class RectOverlay constructor(context: Context?, attributeSet: AttributeSet?) :
         extraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         extraCanvas = Canvas(extraBitmap)
         extraCanvas.drawColor(Color.TRANSPARENT)
+
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -48,49 +64,30 @@ class RectOverlay constructor(context: Context?, attributeSet: AttributeSet?) :
     ) {
         val start = startLandmark!!.position
         val end = endLandmark!!.position
+        if(startLandmark.inFrameLikelihood >0.8 && endLandmark.inFrameLikelihood > 0.8){
+            extraCanvas.drawLine(
+                (width - (start.x)/0.5f+200), start.y/0.5f+200, (width - end.x/0.5f+200), end.y/0.5f+200, paintGreen
+            )
+        }
 
 
-        val xmul = 3.3f;
-        val ymul = 3.3f;
-
-        extraCanvas.drawLine(
-            (start.x * xmul) -250 , start.y* ymul, (end.x* xmul) -250, end.y* ymul, paint
-        )
-        invalidate();
+        invalidate()
     }
 
-    internal fun drawNeck(
-        _occhioSx: PoseLandmark?,
-        _occhioDx: PoseLandmark?,
-        _spallaSx: PoseLandmark?,
-        _spallaDx: PoseLandmark?
-    ) {
+    internal fun drawCircle(landmark: PoseLandmark?) {
 
-        val xmul = 3.3f;
-        val ymul = 3.3f;
-
-
-        val occhioSx = _occhioSx!!.position
-        val occhioDx = _occhioDx!!.position
-        val spallaSx = _spallaSx!!.position
-        val spallaDx = _spallaDx!!.position
-
-
-        val fineColloX =  occhioDx.x +  ((occhioSx.x - occhioDx.x) / 2);
-        val fineColloY = occhioDx.y + ((occhioSx.y - occhioDx.y) / 2);
-
-        val inizioColloX = spallaDx.x + ((spallaSx.x - spallaDx.x ) / 2);
-        val inizioColloY = spallaDx.y + ((spallaSx.y - spallaDx.y) / 2);
-
-        extraCanvas.drawLine(
-            (fineColloX * xmul) - 250, fineColloY* ymul, (inizioColloX* xmul) -250, inizioColloY* ymul, paint
-        )
-
-        extraCanvas.drawLine(
-            (occhioSx.x * xmul) - 250, occhioSx.y* ymul, (occhioDx.x* xmul) -250, occhioDx.y* ymul, paint
-        )
-        invalidate();
+        if (landmark != null) {
+            if (-width/2 < landmark.position3D.x && landmark.position3D.x < width/2 && landmark.position3D.y < height/2 && landmark.position3D.y > -height/2){
+                if (landmark.inFrameLikelihood > 0.8){
+                    var posX=landmark.position3D.x
+                    var posY=landmark.position3D.y
+                    extraCanvas.drawCircle(width-posX/0.50f+200,posY/0.50f+200,8.0f,paint)
+                }
+            }
+        }
+        invalidate()
     }
-
-
 }
+
+
+

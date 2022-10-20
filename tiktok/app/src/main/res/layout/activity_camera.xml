@@ -7,15 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <onlab.mlkit.tiktok.drawing.GraphicOverlay
-        android:id="@+id/graphic_overlay"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/twenty_percent" />
-
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
@@ -32,6 +23,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".50" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/twenty_percent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2"/>
+
+    <onlab.mlkit.tiktok.drawing.RectOverlay
+        android:id="@+id/rectOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        android:layout_weight="2"/>
 
     <ImageView
         android:id="@+id/stepPhoto"
@@ -65,12 +72,5 @@
         android:visibility="invisible"
         android:background="@drawable/like"
         tools:ignore="MissingConstraints" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/twenty_percent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,14 +1,13 @@
-package onlab.mlkit.tiktok
+package onlab.mlkit.tiktok.data
 
 import android.content.Context
 import android.content.Intent
-import android.media.metrics.Event
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
+import onlab.mlkit.tiktok.CameraActivity
 import onlab.mlkit.tiktok.databinding.ItemDanceBinding
 
 class ListAdapter (

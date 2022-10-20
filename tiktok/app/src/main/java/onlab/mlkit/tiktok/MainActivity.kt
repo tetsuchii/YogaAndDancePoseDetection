@@ -1,14 +1,13 @@
 package onlab.mlkit.tiktok
 
 
-import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
 import android.os.*
 import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import onlab.mlkit.tiktok.data.Dance
+import onlab.mlkit.tiktok.data.ListAdapter
 import onlab.mlkit.tiktok.databinding.ActivityMainBinding
 
 
