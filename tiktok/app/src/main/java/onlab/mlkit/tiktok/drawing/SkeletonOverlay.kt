@@ -5,10 +5,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.google.mlkit.vision.pose.PoseLandmark
-import kotlin.math.absoluteValue
-import kotlin.math.max
 
-class RectOverlay constructor(context: Context?, attributeSet: AttributeSet?) :
+class SkeletonOverlay constructor(context: Context?, attributeSet: AttributeSet?) :
     View(context, attributeSet) {
     private val transformationMatrix = Matrix()
     private lateinit var extraCanvas: Canvas

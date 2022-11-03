@@ -32,7 +32,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.2"/>
 
-    <onlab.mlkit.tiktok.drawing.RectOverlay
+    <onlab.mlkit.tiktok.drawing.SkeletonOverlay
         android:id="@+id/rectOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

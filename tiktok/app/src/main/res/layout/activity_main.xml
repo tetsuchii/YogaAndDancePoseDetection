@@ -7,7 +7,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="horizontal">
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="trAIner"
+        android:textAlignment="center"
+        android:textColor="#fff"
+        android:layout_marginTop="20dp"
+        android:textSize="50dp"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDances"

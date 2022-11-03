@@ -1,26 +1,36 @@
 package onlab.mlkit.tiktok.logic
 
-import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.Logger
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions
-import kotlin.reflect.KFunction1
+import onlab.mlkit.tiktok.classification.PoseClassifierProcessor
+import onlab.mlkit.tiktok.drawing.PoseDrawing
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+
 
 class PoseImageAnalyzer(
-    val poseFoundListener: KFunction1<Pose, Unit>,
-    /*val poseLogic: PoseLogic, val mode: Int*/) : ImageAnalysis.Analyzer{
+    val poseDrawing: PoseDrawing,
+    val poseLogic: PoseLogic, val mode: String, val context: Context
+) : ImageAnalysis.Analyzer{
 
-    private lateinit var poseDetector : PoseDetector
+    private var poseDetector : PoseDetector
+    private lateinit var poseClassifierProcessor : PoseClassifierProcessor
+    private var classificationExecutor: Executor? = null
 
     init {
         val options = AccuratePoseDetectorOptions.Builder()
             .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
             .build()
         poseDetector = PoseDetection.getClient(options)
+        classificationExecutor = Executors.newSingleThreadExecutor()
+
     }
 
     @androidx.camera.core.ExperimentalGetImage
@@ -30,8 +40,13 @@ class PoseImageAnalyzer(
             val image = InputImage.fromMediaImage(mediaImage,imageP.imageInfo.rotationDegrees)
             poseDetector.process(image)
                 .addOnSuccessListener {pose ->
-                    poseFoundListener(pose)
-                    /*results -> poseLogic.updatePoseLandmarks(results.allPoseLandmarks,mode)*/
+                    poseDrawing.drawSkeleton(pose)
+                    val type=mode.split(" ")
+                    if(type[1] == "yoga"){
+                        poseLogic.updatePoseLandmarksYoga(pose,mode,context)
+                    }else{
+                        poseLogic.updatePoseLandmarksDance(pose.allPoseLandmarks,mode)
+                    }
                 }
                 .addOnFailureListener { e -> println(e) }
                 .addOnCompleteListener{

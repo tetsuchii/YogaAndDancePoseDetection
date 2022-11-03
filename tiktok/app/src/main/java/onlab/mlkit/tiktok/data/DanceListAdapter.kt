@@ -1,20 +1,21 @@
 package onlab.mlkit.tiktok.data
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
-import onlab.mlkit.tiktok.CameraActivity
+import onlab.mlkit.tiktok.R
 import onlab.mlkit.tiktok.databinding.ItemDanceBinding
 
-class ListAdapter (
-    var dances : List<Dance>,
+class DanceListAdapter (
+    var dances : List<Details>,
     val mContext : Context,
     var listener : OnItemClickListener
-        ) : RecyclerView.Adapter<ListAdapter.ListViewHolder>() {
+        ) : RecyclerView.Adapter<DanceListAdapter.ListViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -26,7 +27,7 @@ class ListAdapter (
         holder.binding.apply {
             danceName.text = dances[position].name
             danceDetail.text = dances[position].description
-
+            danceImage.setImageResource(R.drawable.fifth)
         }
     }
 
@@ -36,29 +37,20 @@ class ListAdapter (
 
     inner class ListViewHolder(val binding: ItemDanceBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener {
-        var intent: Intent? = null
-        var learnButton: Button = binding.learnSteps
-        var practiceButton: Button = binding.practiceSteps
-        init {
-            learnButton.setOnClickListener {
-                intent = Intent(mContext, CameraActivity::class.java)
-                intent!!.type = "learn"
-                mContext.startActivity(intent)
-            }
-            practiceButton.setOnClickListener {
-                intent = Intent(mContext, CameraActivity::class.java)
-                intent!!.type = "practice"
-                mContext.startActivity(intent)
-            }
-        }
 
+        init {
+            itemView.setOnClickListener(this)
+        }
+        @SuppressLint("SuspiciousIndentation")
         override fun onClick(p0: View?) {
-            listener.OnItemCLick()
+            val position = adapterPosition
+            if(position != RecyclerView.NO_POSITION)
+            listener.OnItemClick(position)
         }
     }
 
     interface OnItemClickListener {
-        fun OnItemCLick()
+        fun OnItemClick(position: Int)
     }
 }
 
