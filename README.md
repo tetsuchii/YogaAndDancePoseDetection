@@ -1,1 +1,1 @@
-# Önálló laboratórium 2022 - Törő Anna Nina
+# Önálló laboratórium és Szakdolgozat 2022 - Törő Anna Nina
