@@ -9,15 +9,33 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed-medium"
-        android:text="trAIner"
-        android:textAlignment="center"
-        android:textColor="#fff"
-        android:layout_marginTop="20dp"
-        android:textSize="50dp"></TextView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="120dp"
+            android:layout_marginRight="0dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="trAIner"
+            android:textAlignment="center"
+            android:textColor="#fff"
+            android:layout_marginTop="20dp"
+            android:textSize="50dp"
+            tools:ignore="MissingConstraints"></TextView>
+
+            <ImageView
+                android:id="@+id/profile"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:clickable="true"
+                android:contentDescription="profile"
+                android:src="@drawable/profile"
+                tools:ignore="MissingConstraints,SpeakableTextPresentCheck" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDances"

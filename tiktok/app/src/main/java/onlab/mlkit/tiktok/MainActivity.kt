@@ -13,6 +13,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import onlab.mlkit.tiktok.data.Pose
 import onlab.mlkit.tiktok.data.PoseDatabase
 import onlab.mlkit.tiktok.data.PoseListAdapter
@@ -24,6 +27,10 @@ class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var database : PoseDatabase
     private  lateinit var adapter : PoseListAdapter
+    private lateinit var auth: FirebaseAuth
+
+    private lateinit var profile : ImageView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +45,14 @@ class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
         animDrawable.setExitFadeDuration(5000)
         animDrawable.start()
 
+        profile=findViewById(R.id.profile)
+
+        profile.setOnClickListener {
+            displayLogoutDialog()
+        }
+
+        auth= Firebase.auth
+
         database= PoseDatabase.getDatabase(applicationContext)
         //println(database.poseDao().getAll())
         adapter = PoseListAdapter(database.poseDao().getAll(),applicationContext, this, resources,packageName)
@@ -45,6 +60,35 @@ class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
         viewBinding.rvDances.layoutManager = LinearLayoutManager(this)
 
 
+    }
+
+    private fun displayLogoutDialog() {
+        var logoutDialog = Dialog(this)
+        logoutDialog.setCancelable(true)
+        logoutDialog.setContentView(R.layout.logout_dialog)
+        logoutDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        var button=logoutDialog.findViewById<ImageView>(R.id.logout)
+        var cancel=logoutDialog.findViewById<TextView>(R.id.cancel)
+
+        button.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this,LoginActivity::class.java))
+        }
+        cancel.setOnClickListener {
+            logoutDialog.cancel()
+        }
+
+        logoutDialog.show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = auth.currentUser
+        if(currentUser == null){
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
     }
 
 
