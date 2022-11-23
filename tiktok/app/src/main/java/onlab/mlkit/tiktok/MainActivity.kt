@@ -7,33 +7,23 @@ import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.ColorDrawable
 import android.os.*
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import onlab.mlkit.tiktok.data.DanceListAdapter
-import onlab.mlkit.tiktok.data.Details
-import onlab.mlkit.tiktok.data.Type
+import onlab.mlkit.tiktok.data.Pose
+import onlab.mlkit.tiktok.data.PoseDatabase
+import onlab.mlkit.tiktok.data.PoseListAdapter
 import onlab.mlkit.tiktok.databinding.ActivityMainBinding
-import java.text.FieldPosition
 
 
-class MainActivity : AppCompatActivity(), DanceListAdapter.OnItemClickListener {
+class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
 
     private lateinit var viewBinding: ActivityMainBinding
-    var dancesList = mutableListOf(
-        Details("Running man","The famous shuffle move. Dance like Redfoo in Party Rock Anthem!","ize",
-            Type.DANCE),
-        Details("Tree","One of the most famous yoga pose. You definitely have to try it!","ize",Type.YOGA),
-        Details("Warrior2", "Something funny and catchy about the pose.","ize",Type.YOGA),
-        Details("Goddess", "Lorem ipsum idk...","ize",Type.YOGA)
-
-    )
-    val adapter = DanceListAdapter(dancesList,this,this)
+    private lateinit var database : PoseDatabase
+    private  lateinit var adapter : PoseListAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +37,10 @@ class MainActivity : AppCompatActivity(), DanceListAdapter.OnItemClickListener {
         animDrawable.setEnterFadeDuration(10)
         animDrawable.setExitFadeDuration(5000)
         animDrawable.start()
+
+        database= PoseDatabase.getDatabase(applicationContext)
+        //println(database.poseDao().getAll())
+        adapter = PoseListAdapter(database.poseDao().getAll(),applicationContext, this, resources,packageName)
         viewBinding.rvDances.adapter = adapter
         viewBinding.rvDances.layoutManager = LinearLayoutManager(this)
 
@@ -71,11 +65,12 @@ class MainActivity : AppCompatActivity(), DanceListAdapter.OnItemClickListener {
         var learnButton:Button=popupDialog.findViewById(R.id.learn)
         var practiceButton:Button=popupDialog.findViewById(R.id.practice)
 
-        var codeName = when(dancesList[position].type){
-            Type.YOGA -> "yoga "
-            Type.DANCE -> "dance "
+        var codeName = when(database.poseDao().getAll()[position].type){
+            Pose.Type.YOGA -> "yoga "
+            Pose.Type.DANCE -> "dance "
+            else -> {return}
         }
-        codeName+=dancesList[position].name.toString()
+        codeName+=database.poseDao().getAll()[position].name.toString()
         learnButton.setOnClickListener {
             intent = Intent(this, CameraActivity::class.java)
 
@@ -88,10 +83,14 @@ class MainActivity : AppCompatActivity(), DanceListAdapter.OnItemClickListener {
         intent!!.type = "practice $codeName"
         this.startActivity(intent)
         }
-
-        image.setImageResource(R.drawable.first)
-        name.text = dancesList[position].name
-        detail.text=dancesList[position].description
+        val dataObject=database.poseDao().getAll()[position]
+        name.text = dataObject.name
+        detail.text=dataObject.description
+        moreDetail.text=dataObject.detailedDescription
+        val uri = "@drawable/${dataObject.name.filter { !it.isWhitespace() }.lowercase()}"
+        val imageResource = resources.getIdentifier(uri, null, packageName)
+        val res = resources.getDrawable(imageResource)
+        image.setImageDrawable(res)
 
         popupDialog.show()
     }

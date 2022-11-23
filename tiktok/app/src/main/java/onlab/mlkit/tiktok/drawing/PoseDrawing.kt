@@ -1,11 +1,10 @@
 package onlab.mlkit.tiktok.drawing
 
-import android.widget.Toast
+import android.util.Log
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
-import onlab.mlkit.tiktok.CameraActivity
 
-class PoseDrawing(private val activity: CameraActivity, private val skeletonOverlay: SkeletonOverlay) {
+class PoseDrawing(private val skeletonOverlay: SkeletonOverlay) {
     fun drawSkeleton(pose: Pose)  {
         try {
             val leftShoulder = pose.getPoseLandmark(PoseLandmark.LEFT_SHOULDER)
@@ -91,7 +90,6 @@ class PoseDrawing(private val activity: CameraActivity, private val skeletonOver
             skeletonOverlay.drawLine(rightHeel, rightFootIndex)
 
         } catch (e: java.lang.Exception) {
-            Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
-        }
+            Log.e("Drawing", e.message.toString())
     }
-}
+}}

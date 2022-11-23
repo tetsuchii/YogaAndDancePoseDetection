@@ -10,6 +10,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Size
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -18,6 +19,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import onlab.mlkit.tiktok.databinding.ActivityCameraBinding
 import onlab.mlkit.tiktok.drawing.PoseDrawing
 import onlab.mlkit.tiktok.drawing.SkeletonOverlay
@@ -37,7 +39,8 @@ class CameraActivity : AppCompatActivity() {
     private val poseLogic = PoseLogic(this)
     private lateinit var poseDrawing : PoseDrawing
     private lateinit var skeletonOverlay: SkeletonOverlay
-    private var modeDance by Delegates.notNull<String>()
+    private var poseMode by Delegates.notNull<String>()
+    private lateinit var timer: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,9 +48,17 @@ class CameraActivity : AppCompatActivity() {
         viewBinding = ActivityCameraBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         skeletonOverlay=viewBinding.rectOverlay
-        poseDrawing=PoseDrawing(this,skeletonOverlay)
+        poseDrawing=PoseDrawing(skeletonOverlay)
 
-        modeDance= intent.type.toString()
+        poseMode= intent.type.toString()
+        println(poseMode)
+        val name=poseMode.lowercase().split(" ")
+        val uri = "@drawable/${name[2]}"
+        val imageResource = resources.getIdentifier(uri, null, packageName)
+        val res = resources.getDrawable(imageResource)
+        viewBinding.stepPhoto.setImageDrawable(res)
+        timer=viewBinding.timer
+
         // Request camera permissions
         if (allPermissionsGranted()) {
             startCamera()
@@ -72,7 +83,7 @@ class CameraActivity : AppCompatActivity() {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build().also {
 
-                    it.setAnalyzer(ContextCompat.getMainExecutor(this), (PoseImageAnalyzer(poseDrawing,poseLogic,modeDance, this)))
+                    it.setAnalyzer(ContextCompat.getMainExecutor(this), (PoseImageAnalyzer(poseDrawing,poseLogic,poseMode, this)))
                 }
 
             // Preview
@@ -124,8 +135,6 @@ class CameraActivity : AppCompatActivity() {
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
-
-
     }
 
     override fun onRequestPermissionsResult(
@@ -175,4 +184,16 @@ class CameraActivity : AppCompatActivity() {
             8000 // value in milliseconds
         )    }
 
+    fun timerChange(time : Int){
+        val min=time/60
+        val sec=time%60
+        viewBinding.timer.text = "${padTo2Digits(min)}:${padTo2Digits(sec)}"
+        if(!timer.isVisible)
+            viewBinding.timer.visibility = View.VISIBLE
+
+
+    }
+    private fun padTo2Digits(num : Int): String {
+        return num.toString().padStart(2, '0');
+    }
 }

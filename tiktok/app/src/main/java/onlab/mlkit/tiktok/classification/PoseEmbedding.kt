@@ -2,27 +2,26 @@ package onlab.mlkit.tiktok.classification
 
 import com.google.mlkit.vision.common.PointF3D
 import com.google.mlkit.vision.pose.PoseLandmark
-import onlab.mlkit.tiktok.classification.Utils.average
-import onlab.mlkit.tiktok.classification.Utils.l2Norm2D
-import onlab.mlkit.tiktok.classification.Utils.multiplyAllFloat
-import onlab.mlkit.tiktok.classification.Utils.subtract
-import onlab.mlkit.tiktok.classification.Utils.subtractAll
+import onlab.mlkit.tiktok.classification.PointOperations.average
+import onlab.mlkit.tiktok.classification.PointOperations.l2Norm2D
+import onlab.mlkit.tiktok.classification.PointOperations.multiplyAllFloat
+import onlab.mlkit.tiktok.classification.PointOperations.subtract
+import onlab.mlkit.tiktok.classification.PointOperations.subtractAll
+
 
 object PoseEmbedding {
-  private const val TORSO_MULTIPLIER = 2.5f
-  fun getPoseEmbedding(landmarks: MutableList<PointF3D?>): MutableList<PointF3D> {
+  private const val TORSO_MULTIPLIER = 2f
+  fun getPoseEmbedding(landmarks: MutableList<PointF3D>): MutableList<PointF3D> {
     val normalizedLandmarks = normalize(landmarks)
     return getEmbedding(normalizedLandmarks)
   }
 
-  private fun normalize(landmarks: MutableList<PointF3D?>): List<PointF3D> {
-      landmarks as MutableList<PointF3D>
+  private fun normalize(landmarks: MutableList<PointF3D>): List<PointF3D> {
       val normalizedLandmarks: MutableList<PointF3D> = ArrayList(landmarks)
       val center: PointF3D = average(
         landmarks[PoseLandmark.LEFT_HIP], landmarks[PoseLandmark.RIGHT_HIP]
       )
       subtractAll(center, normalizedLandmarks)
-
       multiplyAllFloat(normalizedLandmarks, 1 / getPoseSize(normalizedLandmarks))
       return normalizedLandmarks
   }
@@ -49,7 +48,6 @@ object PoseEmbedding {
   private fun getEmbedding(lm: List<PointF3D>): MutableList<PointF3D> {
     val embedding: MutableList<PointF3D> = ArrayList()
 
-    // One joint.
     embedding.add(
       subtract(
         average(lm[PoseLandmark.LEFT_HIP], lm[PoseLandmark.RIGHT_HIP]),
@@ -64,7 +62,6 @@ object PoseEmbedding {
     embedding.add(subtract(lm[PoseLandmark.LEFT_KNEE], lm[PoseLandmark.LEFT_ANKLE]))
     embedding.add(subtract(lm[PoseLandmark.RIGHT_KNEE], lm[PoseLandmark.RIGHT_ANKLE]))
 
-    // Two joints.
     embedding.add(
       subtract(
         lm[PoseLandmark.LEFT_SHOULDER], lm[PoseLandmark.LEFT_WRIST]
@@ -78,11 +75,9 @@ object PoseEmbedding {
     embedding.add(subtract(lm[PoseLandmark.LEFT_HIP], lm[PoseLandmark.LEFT_ANKLE]))
     embedding.add(subtract(lm[PoseLandmark.RIGHT_HIP], lm[PoseLandmark.RIGHT_ANKLE]))
 
-    // Four joints.
     embedding.add(subtract(lm[PoseLandmark.LEFT_HIP], lm[PoseLandmark.LEFT_WRIST]))
     embedding.add(subtract(lm[PoseLandmark.RIGHT_HIP], lm[PoseLandmark.RIGHT_WRIST]))
 
-    // Five joints.
     embedding.add(
       subtract(
         lm[PoseLandmark.LEFT_SHOULDER], lm[PoseLandmark.LEFT_ANKLE]
@@ -96,7 +91,6 @@ object PoseEmbedding {
     embedding.add(subtract(lm[PoseLandmark.LEFT_HIP], lm[PoseLandmark.LEFT_WRIST]))
     embedding.add(subtract(lm[PoseLandmark.RIGHT_HIP], lm[PoseLandmark.RIGHT_WRIST]))
 
-    // Cross body.
     embedding.add(subtract(lm[PoseLandmark.LEFT_ELBOW], lm[PoseLandmark.RIGHT_ELBOW]))
     embedding.add(subtract(lm[PoseLandmark.LEFT_KNEE], lm[PoseLandmark.RIGHT_KNEE]))
     embedding.add(subtract(lm[PoseLandmark.LEFT_WRIST], lm[PoseLandmark.RIGHT_WRIST]))

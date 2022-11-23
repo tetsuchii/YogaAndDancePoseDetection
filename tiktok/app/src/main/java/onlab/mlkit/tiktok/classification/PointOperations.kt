@@ -5,7 +5,7 @@ import com.google.mlkit.vision.common.PointF3D
 import kotlin.math.abs
 import kotlin.math.hypot
 
-object Utils {
+object PointOperations {
 
     fun subtract(b: PointF3D, a: PointF3D): PointF3D {
         return PointF3D.from(a.x - b.x, a.y - b.y, a.z - b.z)
@@ -53,10 +53,10 @@ object Utils {
         }
     }
 
-    fun multiplyAll(pointsList: MutableList<PointF3D?>, multiple: PointF3D) {
+    fun multiplyAll(pointsList: MutableList<PointF3D>, multiple: PointF3D) {
         val iterator = pointsList.listIterator()
         while (iterator.hasNext()) {
-            iterator.set(iterator.next()?.let { multiply(it, multiple) })
+            iterator.set(multiply(iterator.next(), multiple))
         }
     }
 }

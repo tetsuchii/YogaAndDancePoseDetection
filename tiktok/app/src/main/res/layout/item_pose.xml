@@ -12,7 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
+        android:layout_marginBottom="20dp"
         tools:ignore="MissingConstraints">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,7 +31,7 @@
                 android:layout_weight="1">
 
                 <ImageView
-                    android:id="@+id/dance_image"
+                    android:id="@+id/pose_image"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:background="@color/white"
@@ -39,7 +41,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/dance_name"
+                android:id="@+id/pose_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
@@ -48,7 +50,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
-                android:id="@+id/dance_detail"
+                android:id="@+id/pose_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -57,6 +59,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,8 @@ import android.util.Log
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
 import onlab.mlkit.tiktok.CameraActivity
-import onlab.mlkit.tiktok.classification.PoseClassifierProcessor
+import onlab.mlkit.tiktok.classification.PoseClassifierThread
+import onlab.mlkit.tiktok.ui.CountUpTimer
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.math.abs
@@ -22,12 +23,28 @@ class PoseLogic(private val activity: CameraActivity) {
     private var kneeToKnee = 0.0f
     private var ankleToAnkle = 0.0f
     private var stepCounter = 0
-    private lateinit var poseClassifierProcessor : PoseClassifierProcessor
+    private lateinit var poseClassifierThread : PoseClassifierThread
     private var classificationExecutor: Executor? = null
+    private var  counter: CountUpTimer
+    private var counterOn=false
 
 
     init {
         classificationExecutor = Executors.newSingleThreadExecutor()
+        counter = object: CountUpTimer(30, 1){
+
+            override fun onCount(count: Int) {
+                activity.runOnUiThread {
+                    run {
+                        activity.timerChange(count)
+                    }
+                }
+            }
+
+            override fun onFinish() {
+            cancel()
+            }
+        }
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -47,23 +64,33 @@ class PoseLogic(private val activity: CameraActivity) {
     }
     fun updatePoseLandmarksYoga(pose: Pose, mode: String, context: Context){
         classificationExecutor?.execute {
-            if(!::poseClassifierProcessor.isInitialized){
-                poseClassifierProcessor= PoseClassifierProcessor(context)
+            if(!::poseClassifierThread.isInitialized){
+                poseClassifierThread= PoseClassifierThread(context)
             }
-            var classificationResult: List<String> = ArrayList()
+            val classificationResult: List<String>
             classificationResult =
-                poseClassifierProcessor.getPoseResult(pose) as List<String>
+                poseClassifierThread.getPoseResult(pose)
 
             val name=mode.split(" ").let { it[2].lowercase()}
+            val type=mode.split(" ").let { it[0] }
 
             if(classificationResult.isNotEmpty()){
                 val classRes = classificationResult[0].split(" ")
-                Log.e("test",classRes[0])
-                if(name == classRes[0] && classRes[1].toFloat() > 0.9f){
+
+                if(name == classRes[0] && classRes[1].toFloat() > 0.8f){
+                    if (type == "practice" && !counterOn){
+                        counter.start()
+                        counterOn=true
+                    }
                     activity.runOnUiThread {
-                        run() {
+                        run {
                             activity.showOk()
                         }
+                    }
+                }else {
+                    if(counterOn){
+                        counter.onFinish()
+                        counterOn=false
                     }
                 }
             }
@@ -146,37 +173,31 @@ class PoseLogic(private val activity: CameraActivity) {
         } else {
             if (stepCounter == 0 && checkFirstStep()) {
                 stepCounter++
-                Log.i("PoseLogic", "firstStep ok")
                 activity.showOk()
                 activity.changeStepImage(2)
             }
             if (stepCounter == 1 && checkSecondStep()) {
                 stepCounter++
-                Log.i("PoseLogic", "secondStep ok")
                 activity.showOk()
                 activity.changeStepImage(3)
             }
             if (stepCounter == 2 && checkThirdStep()) {
                 stepCounter++
-                Log.i("PoseLogic", "thirdStep ok")
                 activity.showOk()
                 activity.changeStepImage(4)
             }
             if (stepCounter == 3 && checkFourthStep()) {
                 stepCounter++
-                Log.i("PoseLogic", "fourthStep ok")
                 activity.showOk()
                 activity.changeStepImage(5)
             }
             if (stepCounter == 4 && checkSecondStep()) {
                 stepCounter++
-                Log.i("PoseLogic", "fifthStep ok")
                 activity.showOk()
                 activity.changeStepImage(6)
             }
             if (stepCounter == 5 && checkThirdStep()) {
                 stepCounter++
-                Log.i("PoseLogic", "sixthStep ok")
                 activity.showOk()
             }
         }

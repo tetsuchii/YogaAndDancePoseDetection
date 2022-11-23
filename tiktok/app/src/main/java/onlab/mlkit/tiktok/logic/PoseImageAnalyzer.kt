@@ -1,15 +1,13 @@
 package onlab.mlkit.tiktok.logic
 
 import android.content.Context
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.Logger
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.PoseDetection
 import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions
-import onlab.mlkit.tiktok.classification.PoseClassifierProcessor
+import onlab.mlkit.tiktok.classification.PoseClassifierThread
 import onlab.mlkit.tiktok.drawing.PoseDrawing
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -21,7 +19,7 @@ class PoseImageAnalyzer(
 ) : ImageAnalysis.Analyzer{
 
     private var poseDetector : PoseDetector
-    private lateinit var poseClassifierProcessor : PoseClassifierProcessor
+    private lateinit var poseClassifierThread : PoseClassifierThread
     private var classificationExecutor: Executor? = null
 
     init {

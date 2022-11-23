@@ -15,6 +15,9 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
         >
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,13 +30,14 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/rounded_corners"
                 android:layout_margin="5dp"
+                android:layout_marginBottom="20dp"
                 android:elevation="10dp"
                 android:layout_weight="1">
 
                 <ImageView
                     android:id="@+id/move_image"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="180dp"
                     android:background="@color/white"
                     android:scaleType="centerCrop"
                     android:src="@drawable/second"
@@ -65,8 +69,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginHorizontal="10dp"
-                android:layout_marginBottom="20dp"
-                android:text="Other details....about learning, about practiceing... Pls start with learning always etc etc"
+                android:layout_marginBottom="10dp"
+                android:text="@string/other_details"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <LinearLayout
@@ -97,5 +101,6 @@
             </LinearLayout>
 
         </LinearLayout>
+        </ScrollView>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>
