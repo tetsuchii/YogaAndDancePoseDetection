@@ -3,6 +3,7 @@ package onlab.mlkit.tiktok.data
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
+import android.text.method.TextKeyListener.clear
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,13 +30,18 @@ class PoseListAdapter(
             poseDetail.text = poses[position].description
             val uri = "@drawable/${poses[position].name.filter { !it.isWhitespace() }.lowercase()}"
             val imageResource = resources.getIdentifier(uri, null, packageName)
-        val res = resources.getDrawable(imageResource)
+            val res = resources.getDrawable(imageResource)
             poseImage.setImageDrawable(res)
         }
     }
 
     override fun getItemCount(): Int {
         return poses.size
+    }
+
+    fun setItems(newList : List<Pose>){
+        this.poses=newList
+        notifyDataSetChanged()
     }
 
     inner class ListViewHolder(val binding: ItemPoseBinding) :

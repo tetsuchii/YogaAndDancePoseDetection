@@ -6,30 +6,31 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.ColorDrawable
-import android.os.*
+import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import onlab.mlkit.tiktok.data.Pose
 import onlab.mlkit.tiktok.data.PoseDatabase
 import onlab.mlkit.tiktok.data.PoseListAdapter
+import onlab.mlkit.tiktok.data.User
 import onlab.mlkit.tiktok.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
+class MainActivity : DrawerBaseActivity(), PoseListAdapter.OnItemClickListener {
 
     private lateinit var viewBinding: ActivityMainBinding
     private lateinit var database : PoseDatabase
     private  lateinit var adapter : PoseListAdapter
     private lateinit var auth: FirebaseAuth
-
-    private lateinit var profile : ImageView
 
 
 
@@ -45,41 +46,14 @@ class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
         animDrawable.setExitFadeDuration(5000)
         animDrawable.start()
 
-        profile=findViewById(R.id.profile)
-
-        profile.setOnClickListener {
-            displayLogoutDialog()
-        }
+        database= PoseDatabase.getDatabase(applicationContext)
 
         auth= Firebase.auth
 
-        database= PoseDatabase.getDatabase(applicationContext)
-        //println(database.poseDao().getAll())
         adapter = PoseListAdapter(database.poseDao().getAll(),applicationContext, this, resources,packageName)
         viewBinding.rvDances.adapter = adapter
         viewBinding.rvDances.layoutManager = LinearLayoutManager(this)
 
-
-    }
-
-    private fun displayLogoutDialog() {
-        var logoutDialog = Dialog(this)
-        logoutDialog.setCancelable(true)
-        logoutDialog.setContentView(R.layout.logout_dialog)
-        logoutDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        var button=logoutDialog.findViewById<ImageView>(R.id.logout)
-        var cancel=logoutDialog.findViewById<TextView>(R.id.cancel)
-
-        button.setOnClickListener {
-            auth.signOut()
-            startActivity(Intent(this,LoginActivity::class.java))
-        }
-        cancel.setOnClickListener {
-            logoutDialog.cancel()
-        }
-
-        logoutDialog.show()
     }
 
     override fun onStart() {
@@ -88,7 +62,33 @@ class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
         val currentUser = auth.currentUser
         if(currentUser == null){
             startActivity(Intent(this, LoginActivity::class.java))
+        } else {
+            val db = FirebaseFirestore.getInstance()
+            var posesQuery : List<Pose>
+            var user : User = User(false,false)
+
+            val docRef=  db.collection("Users").document(currentUser.uid)
+            docRef.get().addOnSuccessListener{
+                    documentSnapshot ->
+                val userRef=documentSnapshot.toObject(User::class.java)
+                if (userRef != null) {
+                    user=userRef
+                }
+                posesQuery = if(user.pregnant || user.injured){
+                    if(user.pregnant && user.injured){
+                        database.poseDao().getInjPregSafe()
+                    }else if (user.pregnant && !user.injured){
+                        database.poseDao().getPregSafe()
+                    }else{
+                        database.poseDao().getInjSafe()
+                    }
+                }else{
+                    database.poseDao().getAll()
+                }
+                adapter.setItems(posesQuery)
+            }
         }
+
     }
 
 
@@ -97,24 +97,23 @@ class MainActivity : AppCompatActivity(), PoseListAdapter.OnItemClickListener {
         adapter.notifyDataSetChanged()    }
 
     private fun displayModePickerDialog(position: Int) {
-        var popupDialog = Dialog(this)
+        val popupDialog = Dialog(this)
         popupDialog.setCancelable(true)
         popupDialog.setContentView(R.layout.mode_picker_dialog)
         popupDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        var image=popupDialog.findViewById<ImageView>(R.id.move_image)
-        var name=popupDialog.findViewById<TextView>(R.id.move_name)
-        var detail=popupDialog.findViewById<TextView>(R.id.move_detail)
-        var moreDetail=popupDialog.findViewById<TextView>(R.id.move_more_detail)
-        var learnButton:Button=popupDialog.findViewById(R.id.learn)
-        var practiceButton:Button=popupDialog.findViewById(R.id.practice)
+        val image=popupDialog.findViewById<ImageView>(R.id.move_image)
+        val name=popupDialog.findViewById<TextView>(R.id.move_name)
+        val detail=popupDialog.findViewById<TextView>(R.id.move_detail)
+        val moreDetail=popupDialog.findViewById<TextView>(R.id.move_more_detail)
+        val learnButton:Button=popupDialog.findViewById(R.id.learn)
+        val practiceButton:Button=popupDialog.findViewById(R.id.practice)
 
         var codeName = when(database.poseDao().getAll()[position].type){
             Pose.Type.YOGA -> "yoga "
             Pose.Type.DANCE -> "dance "
-            else -> {return}
         }
-        codeName+=database.poseDao().getAll()[position].name.toString()
+        codeName+= database.poseDao().getAll()[position].name
         learnButton.setOnClickListener {
             intent = Intent(this, CameraActivity::class.java)
 

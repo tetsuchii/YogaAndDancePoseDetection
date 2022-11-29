@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.work.impl.WorkDatabaseMigrations.MIGRATION_1_2
 
 @Database(
     entities = [Pose::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class PoseDatabase : RoomDatabase(){
@@ -25,15 +24,10 @@ abstract class PoseDatabase : RoomDatabase(){
         }
 
 
-    private val MIGRATION_1_2 = object : Migration(1, 2) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-
-        }
-    }
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
 
             }
         }
-        }
+    }
 }

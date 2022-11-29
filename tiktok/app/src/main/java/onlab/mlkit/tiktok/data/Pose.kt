@@ -14,7 +14,9 @@ data class Pose (
     @ColumnInfo(name = "Name")val name : String,
     @ColumnInfo(name = "Description")val description : String,
     @ColumnInfo(name = "DetailedDescription")val detailedDescription: String,
-    @ColumnInfo(name = "Type")var type:Type
+    @ColumnInfo(name = "Type")var type:Type,
+    @ColumnInfo(name = "PregnantSafe") val pregnantSafe : Boolean,
+    @ColumnInfo(name = "InjurySafe")val injurySafe: Boolean
 ) {
     enum class Type {
         DANCE, YOGA;

@@ -1,6 +1,7 @@
 package onlab.mlkit.tiktok
 
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
@@ -9,8 +10,11 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import onlab.mlkit.tiktok.databinding.ActivityLoginBinding
+import onlab.mlkit.tiktok.databinding.ActivityMainBinding
 
 class LoginActivity : AppCompatActivity() {
+    lateinit var viewBinding: ActivityLoginBinding
     lateinit var logEmail : TextInputEditText
     lateinit var  logPass : TextInputEditText
     lateinit var registerSwitch : TextView
@@ -20,7 +24,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        viewBinding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(viewBinding.root)
+
+        val animDrawable = viewBinding.rootLayout.background as AnimationDrawable
+        animDrawable.setEnterFadeDuration(10)
+        animDrawable.setExitFadeDuration(5000)
+        animDrawable.start()
 
         logEmail=findViewById(R.id.etLogEmail)
         logPass=findViewById(R.id.etLogPass)

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_animation"
     android:orientation="vertical"
+    android:id="@+id/rootLayout"
     tools:context=".LoginActivity">
 
 
@@ -13,7 +14,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Let's register!"
+        android:text="@string/trainer"
         android:textColor="@color/white"
         android:textSize="30dp"
         android:textStyle="bold"
