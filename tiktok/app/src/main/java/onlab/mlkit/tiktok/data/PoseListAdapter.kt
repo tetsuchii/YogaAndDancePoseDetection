@@ -39,6 +39,7 @@ class PoseListAdapter(
         return poses.size
     }
 
+
     fun setItems(newList : List<Pose>){
         this.poses=newList
         notifyDataSetChanged()
@@ -52,6 +53,7 @@ class PoseListAdapter(
         }
         @SuppressLint("SuspiciousIndentation")
         override fun onClick(p0: View?) {
+            println(poses.size)
             val position = adapterPosition
             if(position != RecyclerView.NO_POSITION)
             listener.OnItemClick(position)

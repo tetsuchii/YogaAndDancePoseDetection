@@ -32,6 +32,8 @@ class MainActivity : DrawerBaseActivity(), PoseListAdapter.OnItemClickListener {
     private  lateinit var adapter : PoseListAdapter
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var posesQuery : List<Pose>
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +66,6 @@ class MainActivity : DrawerBaseActivity(), PoseListAdapter.OnItemClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         } else {
             val db = FirebaseFirestore.getInstance()
-            var posesQuery : List<Pose>
             var user : User = User(false,false)
 
             val docRef=  db.collection("Users").document(currentUser.uid)
@@ -93,8 +94,9 @@ class MainActivity : DrawerBaseActivity(), PoseListAdapter.OnItemClickListener {
 
 
     override fun OnItemClick(position: Int) {
+        adapter.notifyDataSetChanged()
         displayModePickerDialog(position)
-        adapter.notifyDataSetChanged()    }
+           }
 
     private fun displayModePickerDialog(position: Int) {
         val popupDialog = Dialog(this)
@@ -108,12 +110,11 @@ class MainActivity : DrawerBaseActivity(), PoseListAdapter.OnItemClickListener {
         val moreDetail=popupDialog.findViewById<TextView>(R.id.move_more_detail)
         val learnButton:Button=popupDialog.findViewById(R.id.learn)
         val practiceButton:Button=popupDialog.findViewById(R.id.practice)
-
-        var codeName = when(database.poseDao().getAll()[position].type){
+        var codeName = when(posesQuery[position].type){
             Pose.Type.YOGA -> "yoga "
             Pose.Type.DANCE -> "dance "
         }
-        codeName+= database.poseDao().getAll()[position].name
+        codeName+= posesQuery[position].name
         learnButton.setOnClickListener {
             intent = Intent(this, CameraActivity::class.java)
 
@@ -126,7 +127,7 @@ class MainActivity : DrawerBaseActivity(), PoseListAdapter.OnItemClickListener {
         intent!!.type = "practice $codeName"
         this.startActivity(intent)
         }
-        val dataObject=database.poseDao().getAll()[position]
+        val dataObject=posesQuery[position]
         name.text = dataObject.name
         detail.text=dataObject.description
         moreDetail.text=dataObject.detailedDescription
